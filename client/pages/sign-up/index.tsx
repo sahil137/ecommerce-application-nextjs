@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import { auth } from "../../utils/firebase-config";
 import { toast } from "react-toastify";
+import { disabledButton, enabledButton } from "../../constants/authForm";
+import Loader from "../../components/ui/loader";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const emailButtonDisabled = !email;
+  const emailButtonDisabledStyles = emailButtonDisabled
+    ? disabledButton
+    : enabledButton;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       await auth.sendSignInLinkToEmail(email, {
         url: process.env.NEXT_PUBLIC_REGISTER_REDIRECT_URL || "",
@@ -17,9 +25,11 @@ const SignUp = () => {
       // store user email in local storage
       window.localStorage.setItem("emailForRegistration", email);
       setEmail("");
+      setLoading(false);
     } catch (error) {
       console.log(error);
       toast.error("Error in sending email");
+      setLoading(false);
     }
   };
   return (
@@ -44,10 +54,12 @@ const SignUp = () => {
             </div>
             <div className="flex justify-center">
               <button
-                className="bg-customLight rounded-lg hover:bg-customDark hover:text-white transition-all ease-in-out delay-100 text-xl px-5 py-2 mb-5"
+                disabled={emailButtonDisabled}
+                className={emailButtonDisabledStyles}
                 type="submit"
               >
-                Submit Email
+                <span className="mx-2">Submit Email</span>
+                {loading && <Loader />}
               </button>
             </div>
           </form>

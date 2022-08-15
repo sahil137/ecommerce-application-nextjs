@@ -2,20 +2,28 @@ import React, { useEffect, useState } from "react";
 import { auth } from "../../../utils/firebase-config";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { disabledButton, enabledButton } from "../../../constants/authForm";
+import Loader from "../../../components/ui/loader";
+import { useAppDispatch } from "../../../hooks/redux-hooks";
+import { loginUser } from "../../../features/user/userSlice";
 
 const SignUpComplete = () => {
   const router = useRouter();
-  const { apiKey } = router.query;
-
-  console.log("apikey", apiKey);
+  const dispatch = useAppDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const loginWithEmailDisabled = !email || password.length < 6;
+
+  const loginWithEmailStyle = loginWithEmailDisabled
+    ? disabledButton
+    : enabledButton;
 
   useEffect(() => {
     if (typeof window !== undefined) {
       setEmail(window.localStorage.getItem("emailForRegistration") || "");
-      console.log(window.location.href);
     }
   }, []);
 
@@ -29,6 +37,7 @@ const SignUpComplete = () => {
       toast.error("Password must contain atleast 6 character");
       return;
     }
+    setLoading(true);
     try {
       const data = await auth.signInWithEmailLink(email, window.location.href);
       if (data?.user?.emailVerified) {
@@ -40,12 +49,22 @@ const SignUpComplete = () => {
         // update user password
         await user?.updatePassword(password);
         // get the token for this user
-        const token = user?.getIdTokenResult();
+        const idTokenResult = await user?.getIdTokenResult();
+        dispatch(
+          loginUser({
+            email: user?.email,
+            token: idTokenResult?.token,
+            name: user?.displayName,
+          })
+        );
+        setLoading(false);
+        router.push("/");
       }
       console.log("result", data);
     } catch (error: any) {
       console.log("Error", error);
       toast.error(error.message);
+      setLoading(false);
     }
   };
   return (
@@ -81,10 +100,13 @@ const SignUpComplete = () => {
             </div>
             <div className="flex justify-center">
               <button
-                className="bg-customLight rounded-lg hover:bg-customDark hover:text-white transition-all ease-in-out delay-100 text-xl px-5 py-2 mb-5"
+                disabled={loginWithEmailDisabled}
+                className={loginWithEmailStyle}
                 type="submit"
               >
-                Complete Sign Up
+                <span className="mx-2">Complete Sign Up</span>
+
+                {loading && <Loader />}
               </button>
             </div>
           </form>
