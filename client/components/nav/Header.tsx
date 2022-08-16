@@ -5,17 +5,31 @@ import {
   SettingOutlined,
   UserOutlined,
   UserAddOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import Head from "next/head";
+import firebase from "firebase/compat/app";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
+import { logoutUser } from "../../features/user/userSlice";
+import { useRouter } from "next/router";
 
 const { SubMenu, Item } = Menu;
 
 const Header = () => {
   const [current, setCurrent] = useState("home");
+  const { name, token } = useAppSelector((store) => store.user);
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const handleClick = (e: any) => {
     setCurrent(e.key);
+  };
+
+  const handleLogout = () => {
+    firebase.auth().signOut();
+    dispatch(logoutUser());
+    router.push("/login");
   };
 
   return (
@@ -32,18 +46,39 @@ const Header = () => {
           <Link href="/">Home</Link>
         </Item>
 
-        <SubMenu key="username" icon={<SettingOutlined />} title="Username">
-          <Item key="setting:1">Option 1</Item>
-          <Item key="setting:2">Option 2</Item>
-        </SubMenu>
+        {token && (
+          <SubMenu key="username" icon={<SettingOutlined />} title={name}>
+            {name === "Guest" ? (
+              <Item
+                key="setting:1"
+                // icon={<LogoutOutlined />}
+                // onClick={handleLogout}
+              >
+                Option 1
+              </Item>
+            ) : (
+              <Item
+                key="setting:1"
+                icon={<LogoutOutlined />}
+                onClick={handleLogout}
+              >
+                Logout
+              </Item>
+            )}
+          </SubMenu>
+        )}
 
-        <Item key="signup" icon={<UserAddOutlined />}>
-          <Link href="/sign-up">Sign Up</Link>
-        </Item>
+        {!token && (
+          <>
+            <Item key="signup" icon={<UserAddOutlined />}>
+              <Link href="/sign-up">Sign Up</Link>
+            </Item>
 
-        <Item key="login" icon={<UserOutlined />}>
-          <Link href="/login">Login</Link>
-        </Item>
+            <Item key="login" icon={<UserOutlined />}>
+              <Link href="/login">Login</Link>
+            </Item>
+          </>
+        )}
       </Menu>
     </>
   );
