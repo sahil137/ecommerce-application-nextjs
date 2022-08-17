@@ -2,10 +2,16 @@ import React, { useEffect, useState } from "react";
 import { auth } from "../../../utils/firebase-config";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { disabledButton, enabledButton } from "../../../constants/authForm";
+// import { disabledButton, enabledButton } from "../../../constants/authForm";
 import Loader from "../../../components/ui/loader";
 import { useAppDispatch } from "../../../hooks/redux-hooks";
 import { loginUser } from "../../../features/user/userSlice";
+
+const disabledButton =
+  "cursor-not-allowed bg-gray-300 rounded-lg text-xl px-5 py-2 mb-5";
+
+const enabledButton =
+  "cursor-pointer bg-customLight rounded-lg hover:bg-customDark hover:text-white transition-all ease-in-out text-xl px-5 py-2 mb-5 flex items-center";
 
 const SignUpComplete = () => {
   const router = useRouter();
@@ -16,10 +22,6 @@ const SignUpComplete = () => {
   const [loading, setLoading] = useState(false);
 
   const loginWithEmailDisabled = !email || password.length < 6;
-
-  const loginWithEmailStyle = loginWithEmailDisabled
-    ? disabledButton
-    : enabledButton;
 
   useEffect(() => {
     if (typeof window !== undefined) {
@@ -101,7 +103,9 @@ const SignUpComplete = () => {
             <div className="flex justify-center">
               <button
                 disabled={loginWithEmailDisabled}
-                className={loginWithEmailStyle}
+                className={
+                  loginWithEmailDisabled ? disabledButton : enabledButton
+                }
                 type="submit"
               >
                 <span className="mx-2">Complete Sign Up</span>
