@@ -5,12 +5,7 @@ import Loader from "../../components/ui/loader";
 import { NextPage } from "next";
 import { useAppSelector } from "../../hooks/redux-hooks";
 import { useRouter } from "next/router";
-
-const disabledButton =
-  "cursor-not-allowed bg-gray-300 rounded-lg text-xl px-5 py-2 mb-5";
-
-const enabledButton =
-  "cursor-pointer bg-customLight rounded-lg hover:bg-customDark hover:text-white transition-all ease-in-out text-xl px-5 py-2 mb-5 flex items-center";
+import { disabledButton, enabledButton } from "../../constants/authForm";
 
 const ForgotPassword: NextPage = () => {
   const [email, setEmail] = useState("");

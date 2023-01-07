@@ -11,13 +11,7 @@ import {
 } from "@ant-design/icons";
 import Loader from "../../components/ui/loader";
 import Link from "next/link";
-
-const disabledButton =
-  "cursor-not-allowed bg-gray-300 rounded-lg text-xl px-5 py-2 mb-5";
-
-const enabledButton =
-  "cursor-pointer bg-customLight rounded-lg hover:bg-customDark hover:text-white transition-all ease-in-out text-xl px-5 py-2 mb-5 flex items-center";
-
+import { disabledButton, enabledButton } from "../../constants/authForm";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -117,7 +111,7 @@ const Login = () => {
                 required
               />
               <div
-                className="text-2xl right-[20%] absolute"
+                className="text-2xl right-[15%] absolute cursor-pointer"
                 onClick={handleTogglePassword}
               >
                 {passwordToggle ? <EyeOutlined /> : <EyeInvisibleOutlined />}

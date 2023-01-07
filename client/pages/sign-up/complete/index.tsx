@@ -6,12 +6,13 @@ import { useRouter } from "next/router";
 import Loader from "../../../components/ui/loader";
 import { useAppDispatch } from "../../../hooks/redux-hooks";
 import { loginUser } from "../../../features/user/userSlice";
+import { disabledButton, enabledButton } from "../../../constants/authForm";
 
-const disabledButton =
-  "cursor-not-allowed bg-gray-300 rounded-lg text-xl px-5 py-2 mb-5";
+// const disabledButton =
+//   "cursor-not-allowed bg-gray-300 rounded-lg text-xl px-5 py-2 mb-5";
 
-const enabledButton =
-  "cursor-pointer bg-customLight rounded-lg hover:bg-customDark hover:text-white transition-all ease-in-out text-xl px-5 py-2 mb-5 flex items-center";
+// const enabledButton =
+//   "cursor-pointer bg-customLight rounded-lg hover:bg-customDark hover:text-white transition-all ease-in-out text-xl px-5 py-2 mb-5 flex items-center";
 
 const SignUpComplete = () => {
   const router = useRouter();
